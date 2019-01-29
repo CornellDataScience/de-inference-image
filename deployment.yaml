@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Deployment
+metadata:
+  name: de-inference-deployment
+  labels:
+    app: de-inference
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: de-inference
+  template:
+    metadata:
+      labels:
+        app: de-inference
+    spec:
+      containers:
+      - name: de-inference
+        image: de-inference
+        ports:
+        - containerPort: 8080
