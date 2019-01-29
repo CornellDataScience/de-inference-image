@@ -4,8 +4,9 @@ metadata:
   name: de-inference-service
 spec:
   selector:
-    app: DeInferenceApp
+    app: de-inference
   ports:
   - protocol: TCP
     port: 80
     targetPort: 8080
+  type: NodePort

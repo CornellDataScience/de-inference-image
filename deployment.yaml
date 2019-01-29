@@ -1,11 +1,11 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: de-inference-deployment
   labels:
     app: de-inference
 spec:
-  replicas: 3
+  replicas: 5
   selector:
     matchLabels:
       app: de-inference
@@ -16,6 +16,7 @@ spec:
     spec:
       containers:
       - name: de-inference
-        image: de-inference
+        image: de-inference:latest
+        imagePullPolicy: Never
         ports:
         - containerPort: 8080
