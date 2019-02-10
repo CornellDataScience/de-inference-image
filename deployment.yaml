@@ -16,7 +16,6 @@ spec:
     spec:
       containers:
       - name: de-inference
-        image: de-inference:latest
-        imagePullPolicy: Never
+        image: cornelldatascience/de-inference-image:latest
         ports:
         - containerPort: 8080
