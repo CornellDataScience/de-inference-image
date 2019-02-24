@@ -6,7 +6,6 @@ import re
 
 
 class FaceDetector():
-<<<<<<< HEAD
     def __init__(self, path_to_faces):
 
         self.names = []
@@ -82,7 +81,7 @@ class FaceDetector():
         face = fr.load_image_file(path_to_image)
         encoding = fr.face_encodings(face)
         return len(encoding) != 0
-=======
+
     def infer(self, image):
         # instance variables
         self.names = []
@@ -110,4 +109,3 @@ class FaceDetector():
             except IndexError:
                 print("unable to find face")
                 del self.names[-1]
->>>>>>> 1b0b3e87e396c261791e9c367ed314409b9307f3
