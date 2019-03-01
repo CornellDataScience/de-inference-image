@@ -16,18 +16,16 @@ class FaceDetector():
         assert len(directory) != 0
         file_path = path_to_faces
 
-        file_name = re.compile("(^.+)\....$")
+        file_name = re.compile("(^.+)\.(png|jpeg|jpg)$")
         for image_name in directory:
 
-            if(image_name == '.DS_Store'):
-                continue
-
-            #add names to names list
+            #add names to names list, if not image file, skip
             match = file_name.search(image_name)
+            if match == None: continue
             name = match.group(1)
             self.names.append(name)
 
-            #detect faces
+            #add face encoding to names list, if cannot find a face throws IndexError
             try:
                 face = fr.load_image_file(file_path + image_name)
                 encoding = fr.face_encodings(face)
