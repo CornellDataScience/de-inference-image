@@ -1,6 +1,6 @@
-FROM python:3.7-alpine
+FROM python
 
-RUN apk add cmake
+# RUN apk add cmake py-pip
 
 ADD . .
 
