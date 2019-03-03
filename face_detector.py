@@ -83,5 +83,5 @@ class FaceDetector():
 
     # Returns tuple of the coordinates of location of the face given a person's name in their original picture
     # Top Left Corner: (X,Y), Bottom Right Corner(X,Y) | (location[0],location[2]), (location[3]:location[1])
-    def get_face_location(self, name):
+    def get_face_coordinates(self, name):
         return self.image_dict[name][1][0]
