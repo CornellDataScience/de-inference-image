@@ -1,6 +1,6 @@
 FROM python
 
-RUN apt install cmake
+RUN apt-get update && apt-get install -y cmake
 
 ADD . .
 
