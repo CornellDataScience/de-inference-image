@@ -1,6 +1,6 @@
 FROM python
 
-# RUN apk add cmake py-pip
+RUN apt install cmake
 
 ADD . .
 
