@@ -62,21 +62,27 @@ class FaceDetector():
     ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
     # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
 
-    def infer_person(self, path_to_image):
+    def infer_people(self, path_to_image):
         face_obj = fr.load_image_file(path_to_image)
-        unknown_face_encoding = fr.face_encodings(face_obj)
-        if len(unknown_face_encoding) == 0:
-            return ('', (-1, -1, -1, -1))
-        highest_match_prob = [- 1.0, 'no match']
+        unknown_face_encodings = fr.face_encodings(face_obj)
 
-        for person in self.image_dict:
-            match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
+        names_and_faces = []
+        i = 0
+        for unknown_face_encoding in unknown_face_encodings:
+            if len(unknown_face_encoding) == 0:
+                return ('', ())
+            highest_match_prob = [- 1.0, 'no match']
 
-            if highest_match_prob[0] < match_prob and match_prob > 0.93:
-                highest_match_prob[0] = match_prob
-                highest_match_prob[1] = person
+            for person in self.image_dict:
+                match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
 
-        return (highest_match_prob[1], fr.face_locations(face_obj)[0])
+                if highest_match_prob[0] < match_prob and match_prob > 0.93:
+                    highest_match_prob[0] = match_prob
+                    highest_match_prob[1] = person
+            
+            names_and_faces.append((highest_match_prob[1], fr.face_locations(face_obj)[i]))
+            i += 1
+        return names_and_faces
 
 
     ##Returns whether face recognition detects a face

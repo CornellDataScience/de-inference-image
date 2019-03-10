@@ -39,11 +39,15 @@ async def img_receiver(websocket, path):
 
             # create image
             image = BytesIO(base64.b64decode(image_data))
-            name_and_coords = fr.infer_person(image)
+            names_and_coords = fr.infer_people(image)
+            
+            #create a dictionary out of everyone with keys=name and values=coordinates of face
+            names_and_coords_dict = {}
+            for name_and_coord in names_and_coords:
+                names_and_coords_dict[name_and_coord(0)]= name_and_coord(1)
 
             # encode information to json and send it
-            to_send = json.dumps({'name':name_and_coords[0], 'coordinates':name_and_coords[1]})
-            await websocket.send(to_send)
+            await websocket.send(json.dumps(names_and_coords))
 
             # increment image count
             current_image_count += 1
