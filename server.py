@@ -37,8 +37,8 @@ async def img_receiver(websocket, path):
 
             print("(conn {}, img {}) reciv: {}".format(current_connection, current_image_count, image_metadata))
 
-            # create pillow image
-            image = Image.open(BytesIO(base64.b64decode(image_data)))
+            # create image
+            image = BytesIO(base64.b64decode(image_data))
             name_and_coords = fr.infer_person(image)
 
             # encode information to json and send it
@@ -47,7 +47,7 @@ async def img_receiver(websocket, path):
 
             # increment image count
             current_image_count += 1
-            
+
     except websockets.exceptions.ConnectionClosed:
         print("Connection closed by client")
 
