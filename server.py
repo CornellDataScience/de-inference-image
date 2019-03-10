@@ -4,13 +4,12 @@ import base64
 from PIL import Image, ImageDraw
 from io import BytesIO
 from binascii import b2a_base64
-import face_detector
-
-
+from face_detector import FaceDetector
+import json
 
 lock = asyncio.Lock()
 connection_num = 0
-fr =  face_detector('')
+fr =  FaceDetector('./images/')
 
 async def img_receiver(websocket, path):
     current_image_count = 0
@@ -40,22 +39,15 @@ async def img_receiver(websocket, path):
 
             # create pillow image
             image = Image.open(BytesIO(base64.b64decode(image_data)))
+            name_and_coords = fr.infer_person(image)
 
-            # draw text to image
-            d = ImageDraw.Draw(image)
-            d.text((20,20), "connection#: {}, image#: {}".format(current_connection, current_image_count), fill=(255,255,0))
-
-            # convert image to base64
-            output_buffer = BytesIO()
-            image.save(output_buffer, format="PNG")
-            output_data_str = base64.b64encode(output_buffer.getvalue()).decode("ascii")
-
-            # send modified image back to frontend
-            output_data_url = "data:image/png;base64," + output_data_str
-            await websocket.send(output_data_url)
+            # encode information to json and send it
+            to_send = json.dumps({'name':name_and_coords[0], 'coordinates':name_and_coords[1]})
+            await websocket.send(to_send)
 
             # increment image count
             current_image_count += 1
+            
     except websockets.exceptions.ConnectionClosed:
         print("Connection closed by client")
 

@@ -65,8 +65,9 @@ class FaceDetector():
     def infer_person(self, path_to_image):
         face_obj = fr.load_image_file(path_to_image)
         unknown_face_encoding = fr.face_encodings(face_obj)
-
-        highest_match_prob = (- 1.0, 'no match')
+        if len(unknown_face_encoding) == 0:
+            return ('', (-1, -1, -1, -1))
+        highest_match_prob = [- 1.0, 'no match']
 
         for person in self.image_dict:
             match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
@@ -89,3 +90,5 @@ class FaceDetector():
     # Top Left Corner: (X,Y), Bottom Right Corner(X,Y) | (location[0],location[2]), (location[3]:location[1])
     def get_face_coordinates(self, name):
         return self.image_dict[name][1][0]
+
+
