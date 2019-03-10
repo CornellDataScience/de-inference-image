@@ -3,8 +3,6 @@ import numpy as np
 import os
 import re
 
-
-
 class FaceDetector():
     def __init__(self, path_to_faces):
 
@@ -26,8 +24,10 @@ class FaceDetector():
             self.names.append(name)
 
             #add face encoding to names list, if cannot find a face throws IndexError
+            #*PRECONDITION: ALL IMAGES MUST HAVE 1 FACE
             try:
                 face = fr.load_image_file(file_path + image_name)
+                face_location = fr.face_locations(face)
                 encoding = fr.face_encodings(face)
                 self.encodings.append(encoding)
             except IndexError:
@@ -35,7 +35,8 @@ class FaceDetector():
                 del self.names[-1]
 
             #add to dictionary
-            self.image_dict[name] = encoding
+            self.image_dict[name] = [encoding, face_location]
+
 
     ##Returns probability that two faces are a match (RECOMMENED IF >.93, THEN MATCH)
     def prob_of_match(self, known_face_encoding, face_encoding_to_check):
@@ -58,20 +59,23 @@ class FaceDetector():
         return encoding_match_proportion #> 0.95
 
 
+    ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
+    # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
 
-    ##Returns the person who matches closest with the inputted encoding
-    def infer_person(self, unknown_face_encoding):
-        #default
+    def infer_person(self, path_to_image):
+        face_obj = fr.load_image_file(path_to_image)
+        unknown_face_encoding = fr.face_encodings(face_obj)
+
         highest_match_prob = [- 1.0, 'no match']
 
         for person in self.image_dict:
-            match_prob = prob_of_match(self.image_dict[person], unknown_face_encoding)
+            match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
 
             if highest_match_prob[0] < match_prob and match_prob > 0.93:
                 highest_match_prob[0] = match_prob
                 highest_match_prob[1] = person
 
-        return highest_match_prob[1]
+        return [highest_match_prob[1], fr.face_locations(face_obj)[0]]
 
 
     ##Returns whether face recognition detects a face
@@ -79,3 +83,9 @@ class FaceDetector():
         face = fr.load_image_file(path_to_image)
         encoding = fr.face_encodings(face)
         return len(encoding) != 0
+
+
+    # Returns tuple of the coordinates of location of the face given a person's name in their original picture
+    # Top Left Corner: (X,Y), Bottom Right Corner(X,Y) | (location[0],location[2]), (location[3]:location[1])
+    def get_face_coordinates(self, name):
+        return self.image_dict[name][1][0]
