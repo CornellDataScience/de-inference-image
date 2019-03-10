@@ -66,7 +66,7 @@ class FaceDetector():
         face_obj = fr.load_image_file(path_to_image)
         unknown_face_encoding = fr.face_encodings(face_obj)
 
-        highest_match_prob = [- 1.0, 'no match']
+        highest_match_prob = (- 1.0, 'no match')
 
         for person in self.image_dict:
             match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
@@ -75,7 +75,7 @@ class FaceDetector():
                 highest_match_prob[0] = match_prob
                 highest_match_prob[1] = person
 
-        return [highest_match_prob[1], fr.face_locations(face_obj)[0]]
+        return (highest_match_prob[1], fr.face_locations(face_obj)[0])
 
 
     ##Returns whether face recognition detects a face
