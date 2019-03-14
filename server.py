@@ -57,7 +57,7 @@ async def img_receiver(websocket, path):
     except websockets.exceptions.ConnectionClosed:
         print("Connection closed by client")
 
-start_server = websockets.serve(img_receiver, 'localhost', 8765, max_size=None)
+start_server = websockets.serve(img_receiver, 'localhost', 8080, max_size=None)
 
 asyncio.get_event_loop().run_until_complete(start_server)
 asyncio.get_event_loop().run_forever()
