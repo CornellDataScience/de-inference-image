@@ -1,35 +1,63 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import face_recognition
+import asyncio
+import websockets
+import base64
+from PIL import Image, ImageDraw
+from io import BytesIO
+from binascii import b2a_base64
+from face_detector import FaceDetector
+import json
 
-PORT_NUMBER = 8080
+lock = asyncio.Lock()
+connection_num = 0
+fr =  FaceDetector('./images/')
 
+async def img_receiver(websocket, path):
+    current_image_count = 0
+    current_connection = None
+    try:
+        await lock.acquire()
+        global connection_num
+        current_connection = connection_num
+        connection_num += 1
+    finally:
+        lock.release()
 
-class myHandler(BaseHTTPRequestHandler):
-    # Handler for the GET requests
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'text/html')
-        self.end_headers()
-        # Send the html message
-        self.wfile.write("Hello World !".encode())
-        return
+    try:
+        while True:
+            # read encoded image string
+            image_str = await websocket.recv()
+            # if empty, skip and wait again
+            if not image_str or image_str == "null":
+                continue
 
-    def do_POST(self):
-        self.send_response(200)
-        self.send_header('Content-type', 'application/json')
-        self.end_headers()
-        self.wfile.write('{"hi": "hi"}'.encode())
+            # slice base64 string into data and metadata
+            data_start_idx = image_str.index(",")
+            image_metadata = image_str[0:data_start_idx]
+            image_data = image_str[data_start_idx+1:]
 
+            print("(conn {}, img {}) reciv: {}".format(current_connection, current_image_count, image_metadata))
 
-try:
-    # Create a web server and define the handler to manage the
-    # incoming request
-    server = HTTPServer(('', PORT_NUMBER), myHandler)
-    print('Started httpserver on port ', PORT_NUMBER)
+            # create image
+            image = BytesIO(base64.b64decode(image_data))
 
-    # Wait forever for incoming http requests
-    server.serve_forever()
+            # extract faces
+            names_and_coords = fr.infer_people(image)
+            
+            #create a dictionary out of everyone with keys=name and values=coordinates of face
+            face_data = []
+            for name_and_coord in names_and_coords:
+                face_data.append({"name": name_and_coord[0], "coordinates": name_and_coord[1]})
 
-except KeyboardInterrupt:
-    print('^C received, shutting down the web server')
-    server.socket.close()
+            # encode information to json and send it
+            await websocket.send(json.dumps(face_data))
+
+            # increment image count
+            current_image_count += 1
+
+    except websockets.exceptions.ConnectionClosed:
+        print("Connection closed by client")
+
+start_server = websockets.serve(img_receiver, 'localhost', 8765, max_size=None)
+
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
