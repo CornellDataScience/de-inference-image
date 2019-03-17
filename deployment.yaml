@@ -23,6 +23,10 @@ spec:
             cpu: 500m
           limits:
             cpu: 1
+      volumes:
+      - name: face-pv
+        persistentVolumeClaim:
+          claimName: face-pvc
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
