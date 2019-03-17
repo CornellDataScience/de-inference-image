@@ -2,6 +2,7 @@ import face_recognition as fr
 import numpy as np
 import os
 import re
+from datetime import datetime
 
 class FaceDetector():
     def __init__(self, path_to_faces):
@@ -64,7 +65,10 @@ class FaceDetector():
 
     def infer_people(self, path_to_image):
         face_obj = fr.load_image_file(path_to_image)
+
+        n = datetime.now()
         unknown_face_encodings = fr.face_encodings(face_obj)
+        print(datetime.now() - n)
 
         names_and_faces = []
         i = 0

@@ -20,9 +20,9 @@ spec:
         - containerPort: 8080
         resources:
           requests:
-            cpu: 1
+            cpu: 2
           limits:
-            cpu: 5
+            cpu: 4
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
