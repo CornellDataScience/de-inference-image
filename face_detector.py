@@ -62,13 +62,12 @@ class FaceDetector():
     ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
     # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
 
-    def infer_people(self, path_to_image):
-        face_obj = fr.load_image_file(path_to_image)
+    def infer_people(self, image_bytes):
+        face_obj = fr.load_image_file(image_bytes)
         unknown_face_encodings = fr.face_encodings(face_obj)
 
         names_and_faces = []
-        i = 0
-        for unknown_face_encoding in unknown_face_encodings:
+        for i, unknown_face_encoding in enumerate(unknown_face_encodings):
             if len(unknown_face_encoding) == 0:
                 return ('', ())
             highest_match_prob = [- 1.0, 'no match']
@@ -81,7 +80,6 @@ class FaceDetector():
                     highest_match_prob[1] = person
             
             names_and_faces.append((highest_match_prob[1], fr.face_locations(face_obj)[i]))
-            i += 1
         return names_and_faces
 
 
