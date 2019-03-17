@@ -23,6 +23,9 @@ spec:
             cpu: 500m
           limits:
             cpu: 1
+        volumeMounts:
+        - mountPath: /var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a
+          name: face-data
       volumes:
       - name: face-pv
         persistentVolumeClaim:
