@@ -10,10 +10,12 @@ class FaceDetector():
         self.encodings = []
         self.image_dict = {}
 
+        #path to faces this instance of FaceDetector already knows
         directory = os.listdir(path_to_faces)
         assert len(directory) != 0
         file_path = path_to_faces
 
+        #regex to parse out names from file names
         file_name = re.compile("(^.+)\.(png|jpeg|jpg)$")
         for image_name in directory:
 
@@ -66,20 +68,30 @@ class FaceDetector():
         face_obj = fr.load_image_file(image_bytes)
         unknown_face_encodings = fr.face_encodings(face_obj)
 
+        #initialize empty string that will hold tuples of name of the person and their corresponding face location
         names_and_faces = []
+
+        #Go through face encodings
         for i, unknown_face_encoding in enumerate(unknown_face_encodings):
+
+            #if there is no face encodings (no fce in image) return empty string and empty tuple
             if len(unknown_face_encoding) == 0:
                 return ('', ())
+
+            #since there are people in this image, check who these people are- set default match
             highest_match_prob = [- 1.0, 'no match']
 
+            #go through all people, check number of encoding-match tests that pass
             for person in self.image_dict:
                 match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
 
+                #if more than 93% of match tests pass and is the most that has passed, make it that person
                 if highest_match_prob[0] < match_prob and match_prob > 0.93:
                     highest_match_prob[0] = match_prob
                     highest_match_prob[1] = person
             
             names_and_faces.append((highest_match_prob[1], fr.face_locations(face_obj)[i]))
+        
         return names_and_faces
 
 

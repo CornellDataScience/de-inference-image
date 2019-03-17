@@ -3,6 +3,7 @@ from io import BytesIO
 from face_detector import FaceDetector
 from binascii import b2a_base64
 import base64
+import json
 
 fr =  FaceDetector('./images/')
 
@@ -11,7 +12,12 @@ class ImageProcessing(BaseHTTPRequestHandler):
     def do_POST(self):
         #setup
         content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
+        json_body = self.rfile.read(content_length)
+
+        #retrieve base64 image string from json dictionary (only thing in dictionary)
+        json_dict = json.loads(json_body)
+        body = json_dict.get('image')
+
         self.send_response(200)
         self.end_headers()
 
