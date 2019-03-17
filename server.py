@@ -35,7 +35,7 @@ async def img_receiver(websocket, path):
             image_metadata = image_str[0:data_start_idx]
             image_data = image_str[data_start_idx+1:]
 
-            print("(conn {}, img {}) reciv: {}".format(current_connection, current_image_count, image_metadata))
+            # print("(conn {}, img {}) reciv: {}".format(current_connection, current_image_count, image_metadata))
 
             # create image
             image = BytesIO(base64.b64decode(image_data))
