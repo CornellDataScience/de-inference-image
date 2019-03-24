@@ -2,6 +2,7 @@ import face_recognition as fr
 import numpy as np
 import os
 import re
+from PIL import image
 
 class FaceDetector():
     def __init__(self, path_to_faces):
@@ -37,7 +38,10 @@ class FaceDetector():
             #add to dictionary
             self.image_dict[name] = [encoding, face_location]
 
-
+    def scale_down_image(self, image_bytes):
+        im.thumbnail(size, Image.ANTIALIAS)
+        scaled_down_img_bytes = np.array(im)
+        return scaled_down_image_bytes
     ##Returns probability that two faces are a match (RECOMMENED IF >.93, THEN MATCH)
     def prob_of_match(self, known_face_encoding, face_encoding_to_check):
         #turn into np array
