@@ -8,7 +8,7 @@ class FaceDetector():
 
         self.names = []
         self.encodings = []
-        self.image_dict = {}
+        self.known_people_dict = {}
 
         #path to faces this instance of FaceDetector already knows
         directory = os.listdir(path_to_faces)
@@ -37,62 +37,47 @@ class FaceDetector():
                 del self.names[-1]
 
             #add to dictionary
-            self.image_dict[name] = [encoding, face_location]
-
-
-    ##Returns probability that two faces are a match (RECOMMENED IF >.93, THEN MATCH)
-    def prob_of_match(self, known_face_encoding, face_encoding_to_check):
-        #turn into np array
-        known_face_encoding_np_array = np.array([known_face_encoding])
-
-        #call match function and store encoding matches, lower the tolerance the more strict, 0.09 seems to work well
-        encoding_matches = fr.compare_faces(known_face_encoding_np_array, face_encoding_to_check, tolerance=0.09)
-
-        #count number of matches
-        match_count = 0
-        for encoding_match in encoding_matches[0]:
-            if encoding_match:
-                match_count += 1
-
-        #calculate proportion of matches
-        encoding_match_proportion = match_count/len(encoding_matches[0])
-
-        #93 - 95% of all encoding checks should match
-        return encoding_match_proportion #> 0.95
+            self.known_people_dict[name] = [encoding, face_location]
 
 
     ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
     # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
 
-    def infer_people(self, image_bytes):
-        face_obj = fr.load_image_file(image_bytes)
-        unknown_face_encodings = fr.face_encodings(face_obj)
 
-        #initialize empty string that will hold tuples of name of the person and their corresponding face location
-        names_and_faces = []
-
-        #Go through face encodings
-        for i, unknown_face_encoding in enumerate(unknown_face_encodings):
-
-            #if there is no face encodings (no fce in image) return empty string and empty tuple
-            if len(unknown_face_encoding) == 0:
-                return ('', ())
-
-            #since there are people in this image, check who these people are- set default match
-            highest_match_prob = [- 1.0, 'no match']
-
-            #go through all people, check number of encoding-match tests that pass
-            for person in self.image_dict:
-                match_prob = self.prob_of_match(self.image_dict[person][0], unknown_face_encoding)
-
-                #if more than 93% of match tests pass and is the most that has passed, make it that person
-                if highest_match_prob[0] < match_prob and match_prob > 0.93:
-                    highest_match_prob[0] = match_prob
-                    highest_match_prob[1] = person
-            
-            names_and_faces.append((highest_match_prob[1], fr.face_locations(face_obj)[i]))
+    def infer_people2(self, unknown_image_bytes):
         
-        return names_and_faces
+        #names_and_location = [([list of possible people], face location), ...]
+        names_and_location = []
+
+        face_obj = fr.load_image_file(unknown_image_bytes)
+        #here is the bottleneck
+        unknown_face_encodings = fr.face_encodings(face_obj)
+        all_face_locations = fr.face_locations(face_obj)
+        
+        #if there is no one in encodings, return no one in image
+        if len(unknown_face_encodings) == 0:
+            return ('',())
+
+
+        #go through all unknown face encodings in current image, compare faces, 
+        #TODO: Research if you can thread for each person here?
+        for i, unknown_face_encoding in enumerate(unknown_face_encodings):
+            test_results = fr.compare_faces(self.encodings, unknown_face_encoding[0])
+
+            
+            #TODO rplace iwth numpy array possible_names = np.array()
+            possible_names = []
+
+
+            #loop through matches, if true returns image_dict (sorry no other way to do it so I think)
+            #TODO make sure this is right (if names is in the same order as encodings was ran)
+            for j, test_result in enumerate(test_results):
+                if test_result:
+                    possible_names.append(self.names[j])
+            
+            names_and_location.append((possible_names, all_face_locations[i]))
+
+        return names_and_location
 
 
     ##Returns whether face recognition detects a face
@@ -102,9 +87,5 @@ class FaceDetector():
         return len(encoding) != 0
 
 
-    # Returns tuple of the coordinates of location of the face given a person's name in their original picture
-    # Top Left Corner: (X,Y), Bottom Right Corner(X,Y) | (location[0],location[2]), (location[3]:location[1])
-    def get_face_coordinates(self, name):
-        return self.image_dict[name][1][0]
 
 
