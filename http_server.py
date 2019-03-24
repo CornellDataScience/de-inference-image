@@ -37,8 +37,8 @@ class ImageProcessing(BaseHTTPRequestHandler):
         for name_and_coord in names_and_coords:
             face_data.append({"name": name_and_coord[0], "coordinates": name_and_coord[1]})
 
-        response.write(face_data)
-        self.wfile.write(response.getvalue())
+        face_data_bytes = bytearray(json.dumps(face_data), encoding="utf-8")
+        self.wfile.write(face_data_bytes)
 
 
 #This creates the HTTP server
