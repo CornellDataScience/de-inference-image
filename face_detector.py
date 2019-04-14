@@ -49,13 +49,15 @@ class FaceDetector():
 
         #process image
         face_obj = fr.load_image_file(unknown_image_bytes)
-        unknown_face_encodings = fr.face_encodings(face_obj)
+
+        all_face_locations = fr.face_locations(face_obj)
+
+        unknown_face_encodings = fr.face_encodings(face_obj, known_face_locations=all_face_locations)
         
         #if there is no one in encodings, return no one in image
         if len(unknown_face_encodings) == 0:
             return None 
 
-        all_face_locations = fr.face_locations(face_obj)
 
         #go through all unknown face encodings in current image, compare faces, 
         #TODO: Research if you can thread for each person here?
