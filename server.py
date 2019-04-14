@@ -10,6 +10,7 @@ fr =  FaceDetector('./images/')
 class ImageProcessing(BaseHTTPRequestHandler):
 
     def do_POST(self):
+        print("handling post request")
         #setup
         content_length = int(self.headers['Content-Length'])
         json_body = self.rfile.read(content_length)
