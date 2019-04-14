@@ -27,10 +27,10 @@ class ImageProcessing(BaseHTTPRequestHandler):
         image_data = body[data_start_idx+1:]
 
         # create image
-        response = BytesIO(base64.b64decode(image_data))
+        image_bytes = BytesIO(base64.b64decode(image_data))
 
         # extract faces
-        names_and_coords = fr.infer_people(response)
+        names_and_coords = fr.infer_people(image_bytes)
         
         #create a dictionary out of everyone with keys=name and values=coordinates of face
         face_data = []
