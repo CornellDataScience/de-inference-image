@@ -34,8 +34,9 @@ class ImageProcessing(BaseHTTPRequestHandler):
         
         #create a dictionary out of everyone with keys=name and values=coordinates of face
         face_data = []
-        for name_and_coord in names_and_coords:
-            face_data.append({"name": name_and_coord[0], "coordinates": name_and_coord[1]})
+        if names_and_coords:
+            for name_and_coord in names_and_coords:
+                face_data.append({"name": name_and_coord[0], "coordinates": name_and_coord[1]})
 
         face_data_bytes = bytearray(json.dumps(face_data), encoding="utf-8")
         self.wfile.write(face_data_bytes)
