@@ -60,8 +60,7 @@ class FaceDetector():
         #go through all unknown face encodings in current image, compare faces, 
         #TODO: Research if you can thread for each person here?
         for i, unknown_face_encoding in enumerate(unknown_face_encodings):
-            test_results = fr.compare_faces(self.encodings, unknown_face_encoding, tolerance=0.4)
-            print(test_results)
+            test_results = fr.compare_faces(self.encodings, unknown_face_encoding, tolerance=0.6)
             
             #TODO: possibly speed up with numpy array? possible_names = np.empty(1, dtype='string_')
             possible_names = []
