@@ -67,7 +67,6 @@ class FaceDetector():
             #TODO: possibly speed up with numpy array? possible_names = np.empty(1, dtype='string_')
             possible_names = []
             
-            #TODO: make sure this is right (if names is in the same order as encodings was ran)
             for j, test_result in enumerate(test_results):
                 if test_result:
                     possible_names.append(self.names[j])
