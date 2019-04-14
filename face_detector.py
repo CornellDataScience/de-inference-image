@@ -30,7 +30,7 @@ class FaceDetector():
             try:
                 face = fr.load_image_file(file_path + image_name)
                 face_location = fr.face_locations(face)
-                encoding = fr.face_encodings(face)
+                encoding = fr.face_encodings(face)[0]
                 self.encodings.append(encoding)
             except IndexError:
                 print("unable to find face")
@@ -42,50 +42,46 @@ class FaceDetector():
 
     ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
     # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
-
-
-    def infer_people2(self, unknown_image_bytes):
+    def infer_people(self, unknown_image_bytes):
         
-        #names_and_location = [([list of possible people], face location), ...]
+        #names_and_location = [([list of possible people for face1], face1 location), ...]
         names_and_location = []
 
+        #process image
         face_obj = fr.load_image_file(unknown_image_bytes)
-        #here is the bottleneck
         unknown_face_encodings = fr.face_encodings(face_obj)
-        all_face_locations = fr.face_locations(face_obj)
         
         #if there is no one in encodings, return no one in image
         if len(unknown_face_encodings) == 0:
             return ('',())
 
+        all_face_locations = fr.face_locations(face_obj)
 
         #go through all unknown face encodings in current image, compare faces, 
         #TODO: Research if you can thread for each person here?
         for i, unknown_face_encoding in enumerate(unknown_face_encodings):
-            test_results = fr.compare_faces(self.encodings, unknown_face_encoding[0])
-
+            test_results = fr.compare_faces(self.encodings, unknown_face_encoding, tolerance=0.4)
+            print(test_results)
             
-            #TODO rplace iwth numpy array possible_names = np.array()
+            #TODO: possibly speed up with numpy array? possible_names = np.empty(1, dtype='string_')
             possible_names = []
-
-
-            #loop through matches, if true returns image_dict (sorry no other way to do it so I think)
-            #TODO make sure this is right (if names is in the same order as encodings was ran)
+            
+            #TODO: make sure this is right (if names is in the same order as encodings was ran)
             for j, test_result in enumerate(test_results):
                 if test_result:
                     possible_names.append(self.names[j])
-            
+                    
+            #if no match, person is unknown
+            if len(possible_names) == 0:
+                possible_names.append('Unknown')
+                
             names_and_location.append((possible_names, all_face_locations[i]))
 
         return names_and_location
-
+        
 
     ##Returns whether face recognition detects a face
     def has_face(self, path_to_image):
         face = fr.load_image_file(path_to_image)
         encoding = fr.face_encodings(face)
         return len(encoding) != 0
-
-
-
-
