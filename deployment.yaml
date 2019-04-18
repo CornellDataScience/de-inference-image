@@ -30,7 +30,7 @@ spec:
         - mountPath: /var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a
           name: face-data
       volumes:
-      - name: face-pv
+      - name: face-data
         persistentVolumeClaim:
           claimName: face-pvc
 ---
