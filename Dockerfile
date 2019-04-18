@@ -9,4 +9,6 @@ ADD . .
 
 RUN pip install -r requirements.txt
 
+ENV PYTHONUNBUFFERED=0
+
 CMD ["python", "-u", "server.py"]
