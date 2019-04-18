@@ -11,6 +11,11 @@ print("starting")
 
 class ImageProcessing(BaseHTTPRequestHandler):
 
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'TEST GET PATH')
+
     def do_POST(self):
         print("handling post request")
         #setup
@@ -47,6 +52,6 @@ class ImageProcessing(BaseHTTPRequestHandler):
 
 #This creates the HTTP server
 #TODO: Change from local host to something else
-httpd = HTTPServer(('', 8000), ImageProcessing)
+httpd = HTTPServer(('', 8080), ImageProcessing)
 print("beginning serve loop")
 httpd.serve_forever()
