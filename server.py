@@ -7,6 +7,8 @@ import json
 
 fr =  FaceDetector('./images/')
 
+print("starting")
+
 class ImageProcessing(BaseHTTPRequestHandler):
 
     def do_POST(self):
@@ -46,4 +48,5 @@ class ImageProcessing(BaseHTTPRequestHandler):
 #This creates the HTTP server
 #TODO: Change from local host to something else
 httpd = HTTPServer(('', 8000), ImageProcessing)
+print("beginning serve loop")
 httpd.serve_forever()
