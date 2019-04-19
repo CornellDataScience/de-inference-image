@@ -52,6 +52,6 @@ class ImageProcessing(BaseHTTPRequestHandler):
 
 #This creates the HTTP server
 #TODO: Change from local host to something else
-httpd = HTTPServer(('localhost', 8080), ImageProcessing)
+httpd = HTTPServer(('10.96.95.34', 8080), ImageProcessing)
 print("beginning serve loop")
 httpd.serve_forever()
