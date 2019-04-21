@@ -4,6 +4,7 @@ from face_detector import FaceDetector
 from binascii import b2a_base64
 import base64
 import json
+import time
 
 fr =  FaceDetector('./images/')
 
@@ -17,6 +18,9 @@ class ImageProcessing(BaseHTTPRequestHandler):
         self.wfile.write(b'TEST GET PATH')
 
     def do_POST(self):
+
+        start_time = time.time()
+
         print("handling post request")
         #setup
         content_length = int(self.headers['Content-Length'])
@@ -48,6 +52,8 @@ class ImageProcessing(BaseHTTPRequestHandler):
 
         face_data_bytes = bytearray(json.dumps(face_data), encoding="utf-8")
         self.wfile.write(face_data_bytes)
+        
+        print(time.time() - start_time)
 
 
 #This creates the HTTP server

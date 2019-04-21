@@ -3,6 +3,7 @@ import numpy as np
 import os
 import re
 from datetime import datetime
+import time
 
 class FaceDetector():
     def __init__(self, path_to_faces):
@@ -44,7 +45,8 @@ class FaceDetector():
     ##Returns the person who matches closest with the inputted encoding and the coordinates of the location of a face
     # Format: Top Left Corner: (X,Y), Bottom Right Corner(X,Y) ==> (location[0],location[2]), (location[3]:location[1])
     def infer_people(self, unknown_image_bytes):
-        
+        start_time = time.time()
+
         #names_and_location = [([list of possible people for face1], face1 location), ...]
         names_and_location = []
 
@@ -65,7 +67,6 @@ class FaceDetector():
         for i, unknown_face_encoding in enumerate(unknown_face_encodings):
             test_results = fr.compare_faces(self.encodings, unknown_face_encoding, tolerance=0.6)
             
-            #TODO: possibly speed up with numpy array? possible_names = np.empty(1, dtype='string_')
             possible_names = []
             
             #TODO: make sure this is right (if names is in the same order as encodings was ran)
@@ -79,6 +80,7 @@ class FaceDetector():
                 
             names_and_location.append((possible_names, all_face_locations[i]))
 
+        print(time.time() - start_time)
         return names_and_location
         
 
@@ -87,3 +89,8 @@ class FaceDetector():
         face = fr.load_image_file(path_to_image)
         encoding = fr.face_encodings(face)
         return len(encoding) != 0
+
+
+fd = FaceDetector('./images/')
+print()
+print(fd.infer_people('obama.jpg'))
