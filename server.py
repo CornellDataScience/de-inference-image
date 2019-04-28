@@ -5,7 +5,8 @@ from binascii import b2a_base64
 import base64
 import json
 
-fr =  FaceDetector('./images/')
+# fr =  FaceDetector('./images/') # for development deployment
+fr =  FaceDetector('./var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a/') # for development deployment
 
 print("starting")
 
@@ -52,7 +53,7 @@ class ImageProcessing(BaseHTTPRequestHandler):
 
 #This creates the HTTP server
 #TODO: Change from local host to something else
-httpd = HTTPServer(('0.0.0.0', 8080), ImageProcessing) # for deployment
-# httpd = HTTPServer(('0.0.0.0', 8000), ImageProcessing) # for deployment
+# httpd = HTTPServer(('0.0.0.0', 8080), ImageProcessing) # for deployment
+httpd = HTTPServer(('0.0.0.0', 8000), ImageProcessing) # for deployment
 print("beginning serve loop")
 httpd.serve_forever()
