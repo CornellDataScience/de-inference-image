@@ -6,7 +6,7 @@ import base64
 import json
 
 # fr =  FaceDetector('./images/') # for development deployment
-fr =  FaceDetector('./var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a/') # for development deployment
+fr =  FaceDetector('/var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a/') # for development deployment
 
 print("starting")
 
