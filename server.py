@@ -13,9 +13,10 @@ print("starting")
 class ImageProcessing(BaseHTTPRequestHandler):
 
     def do_GET(self):
+        print("readiness probe")
         self.send_response(200)
         self.end_headers()
-        self.wfile.write(b'TEST GET PATH')
+        self.wfile.write(b'READY')
 
     def do_POST(self):
         print("handling post request")

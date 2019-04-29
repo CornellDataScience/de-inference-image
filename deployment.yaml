@@ -21,6 +21,12 @@ spec:
           value: "0"
         ports:
         - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 3
         resources:
           requests:
             cpu: 500m
