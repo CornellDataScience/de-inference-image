@@ -13,13 +13,14 @@ class FaceDetector():
 
         #path to faces this instance of FaceDetector already knows
         directory = os.listdir(path_to_faces)
+        print(directory)
         assert len(directory) != 0
         file_path = path_to_faces
 
         #regex to parse out names from file names
         file_name = re.compile("(^.+)\.(png|jpeg|jpg)$")
         for image_name in directory:
-
+            print(image_name)
             #add names to names list, if not image file, skip
             match = file_name.search(image_name)
             if match == None: continue
