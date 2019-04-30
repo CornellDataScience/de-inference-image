@@ -10,5 +10,6 @@ ADD . .
 RUN pip install -r requirements.txt
 
 ENV PYTHONUNBUFFERED=0
+ENV PRODUCTION=true
 
 CMD ["python", "-u", "server.py"]
