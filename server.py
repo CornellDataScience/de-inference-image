@@ -8,10 +8,12 @@ from os import getenv
 
 PRODUCTION_MODE = getenv("PRODUCTION", False)
 
-if PRODUCTION_MODE:
-    fr =  FaceDetector('/var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a/') # for development deployment
-else:
-    fr =  FaceDetector('./images/') # for development deployment
+# TODO: fix NFS so we can use prod mode
+fr =  FaceDetector('./images/')
+# if PRODUCTION_MODE:
+#     fr =  FaceDetector('/var/nfs/general/images') # for prod deployment
+# else:
+#     fr =  FaceDetector('./images/') # for development deployment
 
 print("starting")
 

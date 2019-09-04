@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: de-inference
-        image: cornelldatascience/de-inference-image:latest
+        image: cornelldatascience/de-inference-image:test
         env:
         - name: PYTHONUNBUFFERED
           value: "0"
@@ -32,13 +32,17 @@ spec:
             cpu: 500m
           limits:
             cpu: 1
-        volumeMounts:
-        - mountPath: /var/nfs/general/default-face-pvc-pvc-f01c972f-48f0-11e9-8444-00259069c42a
-          name: face-data
-      volumes:
-      - name: face-data
-        persistentVolumeClaim:
-          claimName: face-pvc
+      #   volumeMounts:
+      #   - mountPath: /var/nfs/general/images
+      #     name: face-data-storage
+      # volumes:
+      #   - name: face-data-storage
+      #     hostPath:
+      #       path: /home/
+      #       type: Directory
+        # - name: face-data
+        #   persistentVolumeClaim:
+        #     claimName: de-face-claim
 ---
 apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
